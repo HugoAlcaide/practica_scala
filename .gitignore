@@ -1,1 +1,9 @@
-.ipynb_checkpoints/
+# Scala / sbt / Metals
+.bsp/
+.metals/
+.bloop/
+target/
+project/project/
+project/target/
+.ammonite/
+*.log
