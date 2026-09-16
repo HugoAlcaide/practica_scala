@@ -2,8 +2,15 @@
 .bsp/
 .metals/
 .bloop/
-target/
-project/project/
-project/target/
 .ammonite/
 *.log
+# IntelliJ IDEA
+.idea/
+*.iml
+*~
+
+# sbt y compilación
+target/
+project/target/
+project/project/
+*.jar

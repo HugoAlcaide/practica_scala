@@ -33,20 +33,19 @@ Entorno interactivo tipo REPL basado en la web para experimentación ágil, prot
 
 #### A. Instalación de JupyterLab
 Aprovisionamiento del entorno web de cuadernos mediante el gestor `pip` de Python:
-
 pip install jupyterlab
 
 #### B. Aprovisionamiento de Almond mediante Coursier (`cs.exe`)
 Almond es una aplicación basada en la JVM y no un paquete Python convencional. Se utilizó **Coursier**, el gestor oficial de dependencias y binarios de Scala, para descargar sus artefactos y registrarlo en Jupyter.
 
 1. **Descarga del binario de Coursier:**
-   Invoke-WebRequest -Uri "https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-win32.exe" -OutFile "$env:TEMP\cs.exe"
+Invoke-WebRequest -Uri "https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-win32.exe" -OutFile "$env:TEMP\cs.exe"
 
 2. **Compilación e inyección del kernel en Jupyter:**
-   & "$env:TEMP\cs.exe" launch --fork almond --scala 2.12.21 -- --install
+& "$env:TEMP\cs.exe" launch --fork almond --scala 2.12.21 -- --install
 
 3. **Comprobación de registro de kernels:**
-   jupyter kernelspec list
+jupyter kernelspec list
 
 *Salida:* Se confirmó la presencia de la entrada `scala` bajo el directorio `%APPDATA%\jupyter\kernels\scala`.
 
@@ -89,9 +88,7 @@ Entorno de desarrollo basado en VS Code utilizando el servidor de lenguaje **Met
 
 #### A. Creación de la estructura del proyecto
 Se generó la estructura base utilizando el template oficial de sbt mediante el lanzador dinámico de Coursier adaptado al entorno de Windows:
-
 & "$env:TEMP\cs.exe" launch sbt -- new scala/scala-seed.g8
-
 *(Nombre asignado al proyecto: `scala-vscode`)*
 
 #### B. Incidencias Técnicas y Soluciones Aplicadas
@@ -99,25 +96,19 @@ Se generó la estructura base utilizando el template oficial de sbt mediante el 
 1. **Conflicto de versiones con el JDK global:**
    * **Problema:** Al intentar invocar sbt, el sistema intentaba por defecto usar OpenJDK 22, lo cual provocaba excepciones de incompatibilidad con las librerías internas de Scala 2.12.
    * **Solución aplicada:** Se fijó explícitamente la variable de entorno `JAVA_HOME` a la ruta del JDK 17 y se antepuso en la sesión de terminal activa:
-     
      $env:JAVA_HOME="C:\Program Files\Java\jdk-17"
      $env:Path="$env:JAVA_HOME\bin;$env:Path"
-     
 
 2. **Invocación de sbt mediante Coursier (`cs launch`):**
    * **Problema:** Debido a las restricciones de variables de entorno globales en Windows 11, el comando directo `sbt` no siempre se quedaba registrado de forma persistente en el `PATH` de la terminal de VS Code.
    * **Solución aplicada:** Se estandarizó la ejecución de los comandos de sbt a través del lanzador dinámico de Coursier asegurando el contexto de Java 17:
-     
      & "$env:TEMP\cs.exe" launch sbt -- compile
      & "$env:TEMP\cs.exe" launch sbt -- run
-     
 
 3. **Configuración del archivo `build.sbt`:**
    Se adaptó el archivo de configuración para fijar de manera estricta la versión requerida por la práctica:
-   
    scalaVersion := "2.12.21"
    name := "scala-vscode"
-   
 
 ---
 
@@ -129,19 +120,35 @@ Se generó la estructura base utilizando el template oficial de sbt mediante el 
 #### 2. Compilación y Ejecución Correcta
 ![Ejecución sbt run](../images/vscode-sbt-run.png)
 
-### 2.1 Descripción y Especificaciones
-Entorno de desarrollo basado en VS Code utilizando el servidor de lenguaje **Metals** y la herramienta de gestión y compilación **sbt**.
+---
 
-* **IDE:** Visual Studio Code (con extensiones *Scala (Metals)* y *Scala Syntax*)
-* **Herramienta de compilación:** sbt (versión gestionada vía Coursier)
+## 3. Entorno 3 — IntelliJ IDEA Community + sbt
+
+### 3.1 Descripción y Especificaciones
+Entorno de desarrollo integrado profesional utilizando IntelliJ IDEA Community Edition con soporte nativo para sbt y Scala.
+
+* **IDE:** IntelliJ IDEA Community Edition (2024.3.5) con Plugin de Scala oficial
+* **Herramienta de compilación:** sbt (versión fijada a 1.9.9 para compatibilidad con el extractor del IDE)
 * **Versión de Scala fijada:** 2.12.21
-* **Entorno de ejecución JVM:** Oracle JDK 17 (17.0.12)
+* **Entorno de ejecución JVM:** GraalVM JDK 17 (17.0.12)
 
 ---
 
-### 2.2 Configuración del Proyecto y Resolución de Incidencias
+### 3.2 Resolución de Incidencias Técnicas
 
-#### A. Creación de la estructura del proyecto
-Se generó la estructura base utilizando el template oficial de sbt mediante el lanzador dinámico de Coursier adaptado al entorno de Windows:
-```powershell
-& "$env:TEMP\cs.exe" launch sbt -- new scala/scala-seed.g8
+* **Incompatibilidad de la estructura del plugin con sbt 2.x:**
+  * **Problema:** Al inicializar un proyecto nuevo con la versión de sbt predeterminada (2.0.9), el extractor de metadatos de IntelliJ fallaba con el error `extracting structure failed: Structure file ... is empty` debido a cambios de sintaxis en sbt 2.x.
+  * **Solución aplicada:** Se ajustó la versión en `project/build.properties` a la rama estable `sbt.version=1.9.9`, permitiendo al plugin de IntelliJ generar el archivo `sbt-structure.xml` con éxito y sincronizar las dependencias.
+
+---
+
+### 3.3 Evidencias de Configuración y Ejecución
+
+#### 1. Estructura del Proyecto y Código Fuente
+![Proyecto IntelliJ](../images/intellij-proyecto.png)
+
+#### 2. Ejecución Gráfica desde IntelliJ
+![Ejecución IntelliJ](../images/intellij-run..png)
+
+#### 3. Compilación y Ejecución mediante sbt Shell (`compile` / `run`)
+![Ejecución sbt Shell IntelliJ](../images/intellij-sbt-shell.png)
