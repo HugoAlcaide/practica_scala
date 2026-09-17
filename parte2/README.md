@@ -60,10 +60,10 @@ Demostración de JupyterLab en funcionamiento con el kernel Almond y Scala 2.12.
 ### Ejercicio 15 — Flujo Completo Multirronda
 Ejecución del algoritmo integral con dos partidas consecutivas, filtrado dinámico de manos e indexación paralela de jugadores:
 
-**Parte 1 — Definición de funciones y Primera Ronda:**
+**Parte 1**
 ![Ejercicio 15 - Parte 1](images/Ejercicio-15_1.png)
 
-**Parte 2 — Segunda Ronda y Determinación de Ganadores:**
+**Parte 2**
 ![Ejercicio 15 - Parte 2](images/Ejercicio-15_2.png)
 
 ---
